@@ -19,9 +19,9 @@ const Home = () => {
     if (user) {
       async function callAsync() {
         const docRef = await getProfile(user.uid);
-        console.log(docRef);
+        // console.log(docRef);
         if(docRef.exists()){
-          console.log(docRef.data())
+          // console.log(docRef.data())
           const snap = await getDoc(doc(db, "Admins", user.uid));
           const t = snap.data()["verified"];
           // console.log(t);
@@ -41,137 +41,130 @@ const Home = () => {
      
     }
   }, [user, loading]);
+
   function signOut(){
     logout();
     navigate("/");
   }
     // const [values, setValues] = useState([]);
 
-    const [arr,setArr] = useState([])
-    var global_data = []
-    var dict = {}
-    var i=0;
-    // doc = doc./
-    function createDict(doc){
-      var key = "";
+  const [arr,setArr] = useState([])
+  var global_data = []
+  var dict = {}
+  var i=0;
+  var keys = [ "name", "college", "email", "phone", "fb", "insta", "linkedin", "twitter", "referred_by"]
+  // doc = doc./
+  function createDict(doc){
+    var key = "";
 
-      for (key in doc.data()) {
-        // console.log(key)
-        if(dict[key] == undefined) {
-          dict[key] = []
-        }
-        // temp_arr.push(doc.data()[key]);
-        dict[key].push(doc.data()[key])
+    for(var len = 0; len < keys.length ; len++) {
+      key = keys[len];
+      console.log(key);
+      var value;
+      if(doc.data()[key] == undefined){
+        value = ""
+      }else{
+        value = doc.data()[key]
       }
-      // console.log(temp_arr);
 
-      // global_data.push(temp_arr);
-      console.log("--------------------------");
-      createArray(dict)
+      if(dict[key] == undefined) {
+        dict[key] = []
+      }
+      // console.log(value);
+      dict[key].push(value)
     }
+    createArray(dict)
+  }
 
-    function createArray(dict){
-      var temp_arr = [];
+  function createArray(dict){
+    var temp_arr = [];
 
-        // console.log(dict[key]);
-        temp_arr.push(dict["name"][i]);
-        temp_arr.push(dict["college"][i]);
-        temp_arr.push(dict["email"][i]);
-        temp_arr.push(dict["phone"][i]);
-        temp_arr.push(dict["fb"][i]);
-        temp_arr.push(dict["insta"][i]);
-        temp_arr.push(dict["linkedin"][i]);
-        temp_arr.push(dict["twitter"][i]);
-        // temp_arr.push(dict["url"][i]);
-        // temp_arr.push(dict["image_url"][i]);
-        // temp_arr.push(dict["referral_id"][i]);
-        // temp_arr.push(dict["referred_by"][i]);
-        // if(dict["referred_by"] == undefined) {
-        //   temp_arr.push("");
-        // }else{
-        //   temp_arr.push(dict["referred_by"]);
-        // }
+    for(var len = 0; len < keys.length ; len++) {
+      temp_arr.push(dict[keys[len]][i]);
+    }
     
     i=i+1;
-    console.log(i);
+    // console.log(i);
+    // console.log(temp_arr+"Temp_ARR");
     global_data.push(temp_arr);
-    }
+  }
 
 // create element & render cafe
 
-      async function  we (){
-          console.log("FN called");
+  async function  we (){
+      console.log("FN called");
 
-          const docRef = collection(db, "People");
-          const docSnap = await getDocs(docRef);
-          // hideFunction(form.name.value);
-          docSnap.forEach(doc => {
-            console.log(doc.data());
-            createDict(doc);
-          });
-          setArr(global_data);
-          console.log(arr);
-      }
-      we();
+      const docRef = collection(db, "People");
+      const docSnap = await getDocs(docRef);
+      // hideFunction(form.name.value);
+      docSnap.forEach(doc => {
+        // console.log(doc.data());
+        createDict(doc);
+      });
+      setArr(global_data);
+      console.log(global_data);
+      console.log("ARR IS"+arr);
+  }
+  we();
 
-      function hideFunction() {
-        // Declare variables
-        // console.log("fn called 0");
-        var input, filter, ul, tr, a, i, txtValue;
-        input = document.getElementById('name').value;
-        filter = input.toUpperCase();
-        ul = document.getElementById("myTable"); 
-        tr = ul.getElementsByTagName('tr');
+  function hideFunction() {
+    // Declare variables
+    // console.log("fn called 0");
+    var input, filter, ul, tr, a, i, txtValue;
+    input = document.getElementById('name').value;
+    filter = input.toUpperCase();
+    ul = document.getElementById("myTable"); 
+    tr = ul.getElementsByTagName('tr');
 
-        // Loop through all list items, and hide those who don't match the search query
-        for (var i = 0; i < tr.length; i++) {
-          // a = li[i].getElementsByTagName("a")[0];
-          // x = li[i].getel
-          for(var j = 0; j<tr[i].childElementCount; j++){
-            var temp = (tr[i].childNodes[j].textContent).toString().toUpperCase();
-            var pos = temp.indexOf(filter);
-            if(pos!=-1){
-              tr[i].style.display = "";
-              break;
-            }
-            if(j==(tr[i].childElementCount-1)){
-              tr[i].style.display = "none";
-            }
-          }
+    // Loop through all list items, and hide those who don't match the search query
+    for (var i = 0; i < tr.length; i++) {
+      // a = li[i].getElementsByTagName("a")[0];
+      // x = li[i].getel
+      for(var j = 0; j<tr[i].childElementCount; j++){
+        var temp = (tr[i].childNodes[j].textContent).toString().toUpperCase();
+        var pos = temp.indexOf(filter);
+        if(pos!=-1){
+          tr[i].style.display = "";
+          break;
+        }
+        if(j==(tr[i].childElementCount-1)){
+          tr[i].style.display = "none";
         }
       }
+    }
+  }
 
-      function save(){
-          console.log("f2");
-          var csvContent = '';
-          arr.forEach(function(infoArray, index) {
-              var dataString = infoArray.join(',');
-              csvContent += index < arr.length ? dataString + '\n' : dataString;
-            });
+  function save(){
+      console.log("f2");
+      var csvContent = '';
+      arr.forEach(function(infoArray, index) {
+          var dataString = infoArray.join(',');
+          csvContent += index < arr.length ? dataString + '\n' : dataString;
+        });
 
-          var download = function(content, fileName, mimeType) {
-            var a = document.createElement('a');
-            mimeType = mimeType || 'application/octet-stream';
+      var download = function(content, fileName, mimeType) {
+        var a = document.createElement('a');
+        mimeType = mimeType || 'application/octet-stream';
 
-            if (navigator.msSaveBlob) { 
-              navigator.msSaveBlob(new Blob([content], {
-                type: mimeType
-              }), fileName);
-            } else if (URL && 'download' in a) { 
-              a.href = URL.createObjectURL(new Blob([content], {
-                type: mimeType
-              }));
-              a.setAttribute('download', fileName);
-              document.body.appendChild(a);
-              a.click();
-              document.body.removeChild(a);
-            } else {
-              window.location.href = 'data:application/octet-stream,' + encodeURIComponent(content); // only this mime type is supported
-            }
-          }
-            
-            download(csvContent, 'dowload.csv', 'text/csv;encoding:utf-8');
+        if (navigator.msSaveBlob) { 
+          navigator.msSaveBlob(new Blob([content], {
+            type: mimeType
+          }), fileName);
+        } else if (URL && 'download' in a) { 
+          a.href = URL.createObjectURL(new Blob([content], {
+            type: mimeType
+          }));
+          a.setAttribute('download', fileName);
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        } else {
+          window.location.href = 'data:application/octet-stream,' + encodeURIComponent(content); // only this mime type is supported
+        }
       }
+        
+        download(csvContent, 'dowload.csv', 'text/csv;encoding:utf-8');
+  }
   return (
     <>
       <div className='body1'>
