@@ -82,10 +82,15 @@ const Home = () => {
         temp_arr.push(dict["insta"][i]);
         temp_arr.push(dict["linkedin"][i]);
         temp_arr.push(dict["twitter"][i]);
-        temp_arr.push(dict["url"][i]);
-        temp_arr.push(dict["image_url"][i]);
-        temp_arr.push(dict["referral_id"][i]);
-        temp_arr.push(dict["referred"][i]);
+        // temp_arr.push(dict["url"][i]);
+        // temp_arr.push(dict["image_url"][i]);
+        // temp_arr.push(dict["referral_id"][i]);
+        // temp_arr.push(dict["referred_by"][i]);
+        // if(dict["referred_by"] == undefined) {
+        //   temp_arr.push("");
+        // }else{
+        //   temp_arr.push(dict["referred_by"]);
+        // }
     
     i=i+1;
     console.log(i);
@@ -101,7 +106,7 @@ const Home = () => {
           const docSnap = await getDocs(docRef);
           // hideFunction(form.name.value);
           docSnap.forEach(doc => {
-            // console.log(doc.data());
+            console.log(doc.data());
             createDict(doc);
           });
           setArr(global_data);

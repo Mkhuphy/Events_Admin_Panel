@@ -7,14 +7,13 @@ import { useAuthState } from "react-firebase-hooks/auth";
 
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDjkSc-F8Uzy1JmYXfwgqDuYaI1_YZAtko",
-  authDomain: "firstproject-7388d.firebaseapp.com",
-  databaseURL: "https://firstproject-7388d-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "firstproject-7388d",
-  storageBucket: "firstproject-7388d.appspot.com",
-  messagingSenderId: "326496171217",
-  appId: "1:326496171217:web:ef07902811998dab4941f0",
-  measurementId: "G-BSQ9RCKZHP"
+  apiKey: "AIzaSyA-PoW2G_cAiJoOzuIY-KwOD4u6J421cE8",
+  authDomain: "ca-udghosh22.firebaseapp.com",
+  projectId: "ca-udghosh22",
+  storageBucket: "ca-udghosh22.appspot.com",
+  messagingSenderId: "750620492300",
+  appId: "1:750620492300:web:888471faf7a2e72f2aa429",
+  measurementId: "G-92HHHZ1J95"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -28,10 +27,6 @@ export const signInWithGoogle = () => {
   const provider = new GoogleAuthProvider();
   signInWithPopup(auth, provider)
       .then((result) => {
-        const name = result.user.displayName;
-        const email = result.user.email;
-        const profilePic = result.user.photoURL;
-    
         return result.user;
       })
       .catch((error) => {
