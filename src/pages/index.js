@@ -181,6 +181,7 @@ const Home = () => {
           </div>
               <table id="myTable" className='styled-table'>
                 <thead>
+                  <th>S.No</th>
                   <th>Name</th>
                   <th>College</th>
                   <th>Email</th>
@@ -191,6 +192,7 @@ const Home = () => {
             
             return (
               <tr  key={index}>
+                <td>{index+1}</td>
                 <td>{arr[index][0]}</td>
                 <td>{arr[index][1]}</td>
                 <td>{arr[index][2]}</td>
