@@ -80,7 +80,7 @@ const Home = () => {
     var temp_arr = [];
 
     for(var len = 0; len < keys.length ; len++) {
-      temp_arr.push(dict[keys[len]][i]);
+      temp_arr.push('"'+dict[keys[len]][i]+'"');
     }
     
     i=i+1;
@@ -133,7 +133,7 @@ const Home = () => {
       }
     }
   }
-
+// 
   function save(){
       console.log("f2");
       var csvContent = '';
