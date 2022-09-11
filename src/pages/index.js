@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { collection, doc, getDoc, getDocs} from "firebase/firestore";
+import { collection, collectionGroup, doc, getDoc, getDocs} from "firebase/firestore";
 import '../pages/style.css';
 import 'flowbite';
 import { auth, db, getProfile, logout } from './Firebase';
@@ -55,9 +55,9 @@ const Home = () => {
   var global_data = []
   var dict = {}
   var i=0;
-  var keys = [ "name", "college", "email", "phone", "fb", "insta", "linkedin", "twitter", "referred_by"]
+  var keys = [ "full_name", "institute", "email", "phoneNumber", "fb", "insta", "linkedin", "twitter", "referred_by"]
   // doc = doc./
-  function createDict(doc){
+  async function createDict(doc){
     var key = "";
 
     for(var len = 0; len < keys.length ; len++) {
@@ -76,7 +76,22 @@ const Home = () => {
       // console.log(value);
       dict[key].push(value)
     }
-    createArray(dict)
+    createArray(dict)  //1
+
+    const docRef_1 = collection(db, "People",doc.id,"sports");
+      const docSnap_1 = await getDocs(docRef_1);
+      docSnap_1.forEach(doc => {
+          console.log(doc.id);
+        });
+    
+    // for(var len = 0; len < keys.length ; len++) {
+    //   // console.log(key);
+    //   var value;
+    //     value = " "
+    //   // console.log(value);
+    //   dict[key].push(value)
+    // }
+    // createArray(dict)  //2
   }
 
   function createArray(dict){
@@ -99,6 +114,7 @@ const Home = () => {
 
       const docRef = collection(db, "People");
       const docSnap = await getDocs(docRef);
+      
       // hideFunction(form.name.value);
       docSnap.forEach(doc => {
         // console.log(doc.data());
@@ -107,6 +123,7 @@ const Home = () => {
 
       });
       setArr(global_data);
+      // console.log(arr);
       setArr2(global_data2);
       // console.log(global_data2);
       // console.log("ARR IS "+arr);
@@ -217,7 +234,7 @@ const Home = () => {
       u=u+1;
       // console.log(u);
       global_data1.push(temp_arr);
-      console.log(global_data1);
+      // console.log(global_data1);
     }
   
   // create element & render cafe
@@ -236,8 +253,7 @@ const Home = () => {
         
         setArr1(global_data1);
         
-        // console.log(global_data2);
-        // console.log("ARR IS READY");
+
     }
     we1();
   
@@ -278,7 +294,7 @@ const Home = () => {
     <>
       <div className='body1'>
       <h1 className='h1'>Udghosh Admin</h1>
-          <button onClick={save}>Download as Sheet</button>
+          <button onClick={save}>Download All</button>
           <div className="content">
 
               <form>
@@ -308,15 +324,16 @@ const Home = () => {
                 <td>{arr[index][1]}</td>
                 <td>{arr[index][2]}</td>
                 <td>{arr[index][3]}</td>
-                <td><button onClick={() => save1(arr2[0],"Basketball(M)")}> BasketBall</button>
-                <button onClick={() => save1(arr2[0],"Badminton(M)")}> Badminton</button>
-                <button onClick={() => save1(arr2[0],"Athletics(M)")}> Athletics</button>
-                <button onClick={() => save1(arr2[0],"Hockey(M)")}> Hockey</button></td>
+                <td><button onClick={() => save1(arr2[index],"Basketball(M)")}> BasketBall</button>
+                <button onClick={() => save1(arr2[index],"Badminton(M)")}> Badminton</button>
+                <button onClick={() => save1(arr2[index],"Athletics(M)")}> Athletics</button>
+                <button onClick={() => save1(arr2[index],"Hockey(M)")}> Hockey</button></td>
 
-                <td><button onClick={() => save1(arr2[0],"Basketball(W)")}> BasketBall</button>
-                <button onClick={() => save1(arr2[0],"Badminton(W)")}> Badminton</button>
-                <button onClick={() => save1(arr2[0],"Athletics(W)")}> Athletics</button>
-                <button onClick={() => save1(arr2[0],"Hockey(W)")}> Hockey</button></td>
+                <td><button onClick={() => save1(arr2[index],"Basketball(W)")}> BasketBall</button>
+                <button onClick={() => save1(arr2[index],"Badminton(W)")}> Badminton</button>
+                <button onClick={() => save1(arr2[index],"Athletics(W)")}> Athletics</button>
+                <button onClick={() => save1(arr2[index],"Hockey(W)")}> Hockey</button></td>
+
                 
               </tr>
           );
