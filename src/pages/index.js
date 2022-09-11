@@ -49,6 +49,9 @@ const Home = () => {
     // const [values, setValues] = useState([]);
 
   const [arr,setArr] = useState([])
+  const [arr1,setArr1] = useState([])
+  const [arr2,setArr2] = useState([])
+  var global_data2 = []
   var global_data = []
   var dict = {}
   var i=0;
@@ -59,7 +62,7 @@ const Home = () => {
 
     for(var len = 0; len < keys.length ; len++) {
       key = keys[len];
-      console.log(key);
+      // console.log(key);
       var value;
       if(doc.data()[key] == undefined){
         value = ""
@@ -92,18 +95,21 @@ const Home = () => {
 // create element & render cafe
 
   async function  we (){
-      console.log("FN called");
+      // console.log("FN called");
 
       const docRef = collection(db, "People");
       const docSnap = await getDocs(docRef);
       // hideFunction(form.name.value);
       docSnap.forEach(doc => {
         // console.log(doc.data());
+        global_data2.push(doc.id);
         createDict(doc);
+
       });
       setArr(global_data);
-      console.log(global_data);
-      console.log("ARR IS"+arr);
+      setArr2(global_data2);
+      // console.log(global_data2);
+      // console.log("ARR IS "+arr);
   }
   we();
 
@@ -165,6 +171,109 @@ const Home = () => {
         
         download(csvContent, 'dowload.csv', 'text/csv;encoding:utf-8');
   }
+  function save1(id,gameName){
+    // console.log("f3");
+
+    // ................................................................................................................
+
+    // const [arr,setArr] = useState([])
+    // const [arr2,setArr2] = useState([])
+    
+    var global_data1 = []
+    var dict1 = {}
+    var u=0;
+    var keys = [ "contactCaptain", "contactViceCaptain", "emailCaptain", "emailViceCaptain", "firstNameCaptain", "firstNameViceCaptain", "lastNameCaptain", "lastNameViceCaptain", "sport"]
+    // doc = doc./
+    function createDict1(doc){
+      var key = "";
+  
+      for(var len = 0; len < keys.length ; len++) {
+        key = keys[len];
+        // console.log(key);
+        var value;
+        if(doc.data()[key] == undefined){
+          value = ""
+        }else{
+          value = doc.data()[key]
+        }
+  
+        if(dict1[key] == undefined) {
+          dict1[key] = []
+        }
+        // console.log(value);
+        dict1[key].push(value)
+      }
+      // console.log(dict1)
+      createArray1(dict1)
+    }
+  
+    function createArray1(dict1){
+      var temp_arr = [];
+  
+      for(var len = 0; len < keys.length ; len++) {
+        temp_arr.push(dict1[keys[len]][u]);
+      }
+      
+      u=u+1;
+      // console.log(u);
+      global_data1.push(temp_arr);
+      console.log(global_data1);
+    }
+  
+  // create element & render cafe
+  
+    async function  we1 (){
+        // console.log("FN called");
+  
+        const docRef1 = doc(db, "People/",id,"/sports/"+gameName);
+        const docSnap1 = await getDoc(docRef1);
+        // hideFunction(form.name.value);
+        
+          // console.log(doc.data());
+          
+          createDict1(docSnap1);
+  
+        
+        setArr1(global_data1);
+        
+        // console.log(global_data2);
+        // console.log("ARR IS READY");
+    }
+    we1();
+  
+    
+    
+    var csvContent = '';
+    arr1.forEach(function(infoArray, index) {
+      var dataString = infoArray.join(',');
+      csvContent += index < arr.length ? dataString + '\n' : dataString;
+    });
+    
+    var download = function(content, fileName, mimeType) {
+      var a = document.createElement('a');
+      mimeType = mimeType || 'application/octet-stream';
+      
+      if (navigator.msSaveBlob) { 
+        navigator.msSaveBlob(new Blob([content], {
+          type: mimeType
+        }), fileName);
+      } else if (URL && 'download' in a) { 
+        a.href = URL.createObjectURL(new Blob([content], {
+          type: mimeType
+        }));
+        a.setAttribute('download', fileName);
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      } else {
+        window.location.href = 'data:application/octet-stream,' + encodeURIComponent(content); // only this mime type is supported
+      }
+    }
+    
+    download(csvContent, 'dowload.csv', 'text/csv;encoding:utf-8');
+  }
+
+  // ................................................................................................................
   return (
     <>
       <div className='body1'>
@@ -186,6 +295,8 @@ const Home = () => {
                   <th>College</th>
                   <th>Email</th>
                   <th>Phone</th>
+                  <th>Download (m)</th>
+                  <th>Download (w)</th>
                 </thead>
               <tbody>
           {arr.map((value, index) => {
@@ -197,6 +308,16 @@ const Home = () => {
                 <td>{arr[index][1]}</td>
                 <td>{arr[index][2]}</td>
                 <td>{arr[index][3]}</td>
+                <td><button onClick={() => save1(arr2[0],"Basketball(M)")}> BasketBall</button>
+                <button onClick={() => save1(arr2[0],"Badminton(M)")}> Badminton</button>
+                <button onClick={() => save1(arr2[0],"Athletics(M)")}> Athletics</button>
+                <button onClick={() => save1(arr2[0],"Hockey(M)")}> Hockey</button></td>
+
+                <td><button onClick={() => save1(arr2[0],"Basketball(W)")}> BasketBall</button>
+                <button onClick={() => save1(arr2[0],"Badminton(W)")}> Badminton</button>
+                <button onClick={() => save1(arr2[0],"Athletics(W)")}> Athletics</button>
+                <button onClick={() => save1(arr2[0],"Hockey(W)")}> Hockey</button></td>
+                
               </tr>
           );
           })}

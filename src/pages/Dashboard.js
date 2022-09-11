@@ -96,7 +96,7 @@ export default function Dashboard() {
     <tbody>
     <tr>
             <td>Name</td>
-            <td>{data2}</td>
+            <td>{data2}</td>.
         </tr>
 
         <tr>

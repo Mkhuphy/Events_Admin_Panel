@@ -7,13 +7,13 @@ import { useAuthState } from "react-firebase-hooks/auth";
 
 
 const firebaseConfig = {
-  apiKey: "AIzaSyA-PoW2G_cAiJoOzuIY-KwOD4u6J421cE8",
-  authDomain: "ca-udghosh22.firebaseapp.com",
-  projectId: "ca-udghosh22",
-  storageBucket: "ca-udghosh22.appspot.com",
-  messagingSenderId: "750620492300",
-  appId: "1:750620492300:web:888471faf7a2e72f2aa429",
-  measurementId: "G-92HHHZ1J95"
+  apiKey: "AIzaSyDGp3qtZtaJ1hQWEVW45XJwDxquogCQq3c",
+  authDomain: "events22-3e675.firebaseapp.com",
+  projectId: "events22-3e675",
+  storageBucket: "events22-3e675.appspot.com",
+  messagingSenderId: "3588020150",
+  appId: "1:3588020150:web:17977d074e65aae58dd317",
+  measurementId: "G-4QPLFX0B28"
 };
 
 const app = initializeApp(firebaseConfig);
