@@ -5,9 +5,35 @@ import 'flowbite';
 import { auth, db, getProfile, logout } from './Firebase';
 import { useNavigate } from 'react-router-dom';
 import { useAuthState } from 'react-firebase-hooks/auth';
-
+import items from "../json/allSports.json"
+import fields from "../json/fields.json"
 
 const Home = () => {
+  
+
+  var [allKeys, setAllKeys] = useState([])
+  const [allSports, setAllSports] = useState([])
+  useEffect(() => {
+    const arr1 = []
+    items.map(e => {
+      arr1.push(e)
+    })
+    setAllSports(arr1)
+    // console.log(allSports)
+  },[])
+  const [allFields, setAllFields] = useState([])
+  useEffect(() => {
+    const arr1 = []
+    fields.map(e => {
+      arr1.push(e)
+    })
+    setAllFields(arr1)
+    
+    // console.log(allSports)
+  },[])
+  allKeys = allKeys.concat(allFields,allSports)
+  
+
 
   const navigate = useNavigate();
   const [user, loading, error] = useAuthState(auth);
@@ -49,19 +75,20 @@ const Home = () => {
     // const [values, setValues] = useState([]);
 
   const [arr,setArr] = useState([])
-  const [arr1,setArr1] = useState([])
-  const [arr2,setArr2] = useState([])
-  var global_data2 = []
+  const [arrLarge,setArrLarge] = useState([])
+
+
   var global_data = []
+  var global_data_Large = []
+
   var dict = {}
   var i=0;
-  var keys = [ "full_name", "institute", "email", "phoneNumber", "fb", "insta", "linkedin", "twitter", "referred_by"]
-  // doc = doc./
+  
   async function createDict(doc){
     var key = "";
-
-    for(var len = 0; len < keys.length ; len++) {
-      key = keys[len];
+    // items.map
+    for(var len = 0; len < allFields.length ; len++) {
+      key = allFields[len];
       // console.log(key);
       var value;
       if(doc.data()[key] == undefined){
@@ -76,57 +103,92 @@ const Home = () => {
       // console.log(value);
       dict[key].push(value)
     }
-    createArray(dict)  //1
-
-    const docRef_1 = collection(db, "People",doc.id,"sports");
-      const docSnap_1 = await getDocs(docRef_1);
-      docSnap_1.forEach(doc => {
-          console.log(doc.id);
-        });
-    
-    // for(var len = 0; len < keys.length ; len++) {
-    //   // console.log(key);
-    //   var value;
-    //     value = " "
-    //   // console.log(value);
-    //   dict[key].push(value)
-    // }
-    // createArray(dict)  //2
+    createArray(dict,doc)  //1
   }
 
-  function createArray(dict){
+
+
+
+
+  function createArray(dict,doc){
     var temp_arr = [];
 
-    for(var len = 0; len < keys.length ; len++) {
-      temp_arr.push('"'+dict[keys[len]][i]+'"');
+    for(var len = 0; len < allFields.length ; len++) {
+      temp_arr.push('"'+dict[allFields[len]][i]+'"');
+      
     }
     
     i=i+1;
     // console.log(i);
     // console.log(temp_arr+"Temp_ARR");
     global_data.push(temp_arr);
+    
+    addSportsInTemp(temp_arr,doc)
+
+  }
+
+  async function addSportsInTemp(temp_arr,document){
+
+    var t_arr = [];
+    // console.log(temp_arr.length)
+    for(var len = 0; len < allSports.length ; len++) {
+      const ref = doc(db,"People", document.id,"sports",allSports[len])
+      const docSnap = await getDoc(ref);
+      // console.log(temp_arr)
+      if (docSnap.exists()) {
+        t_arr.push("2000");
+        
+      } else {
+        t_arr.push("0");
+      }
+    }
+    console.log(t_arr.length)
+    // temp_arr.push("2000");
+    // temp_arr.push("0");
+
+    global_data_Large.push(temp_arr);
+
   }
 
 // create element & render cafe
 
+  function createCSV_1(){
+    
+    var temp_arr = [];
+    for(var len = 0; len < allKeys.length ; len++) {
+      temp_arr.push('"'+allKeys[len]+'"');
+    }
+    global_data_Large.push(temp_arr);
+    temp_arr=[]
+    for(var len = 0; len < allKeys.length ; len++) {
+      temp_arr.push('');
+    }
+    global_data_Large.push(temp_arr);
+  }
+
   async function  we (){
       // console.log("FN called");
+      // for(var len = 0; len < allSports.length ; len++) {
+      //   temp_arr.push('"'+allFields[len]+'"');
+      // }
+      createCSV_1();
 
       const docRef = collection(db, "People");
       const docSnap = await getDocs(docRef);
       
       // hideFunction(form.name.value);
+      // console.log(typeof(docSnap))
       docSnap.forEach(doc => {
         // console.log(doc.data());
-        global_data2.push(doc.id);
+        
         createDict(doc);
 
       });
       setArr(global_data);
+      setArrLarge(global_data_Large);
       // console.log(arr);
-      setArr2(global_data2);
-      // console.log(global_data2);
-      // console.log("ARR IS "+arr);
+      
+      
   }
   we();
 
@@ -160,9 +222,9 @@ const Home = () => {
   function save(){
       console.log("f2");
       var csvContent = '';
-      arr.forEach(function(infoArray, index) {
+      arrLarge.forEach(function(infoArray, index) {
           var dataString = infoArray.join(',');
-          csvContent += index < arr.length ? dataString + '\n' : dataString;
+          csvContent += index < arrLarge.length ? dataString + '\n' : dataString;
         });
 
       var download = function(content, fileName, mimeType) {
@@ -188,108 +250,8 @@ const Home = () => {
         
         download(csvContent, 'dowload.csv', 'text/csv;encoding:utf-8');
   }
-  function save1(id,gameName){
-    // console.log("f3");
 
-    // ................................................................................................................
 
-    // const [arr,setArr] = useState([])
-    // const [arr2,setArr2] = useState([])
-    
-    var global_data1 = []
-    var dict1 = {}
-    var u=0;
-    var keys = [ "contactCaptain", "contactViceCaptain", "emailCaptain", "emailViceCaptain", "firstNameCaptain", "firstNameViceCaptain", "lastNameCaptain", "lastNameViceCaptain", "sport"]
-    // doc = doc./
-    function createDict1(doc){
-      var key = "";
-  
-      for(var len = 0; len < keys.length ; len++) {
-        key = keys[len];
-        // console.log(key);
-        var value;
-        if(doc.data()[key] == undefined){
-          value = ""
-        }else{
-          value = doc.data()[key]
-        }
-  
-        if(dict1[key] == undefined) {
-          dict1[key] = []
-        }
-        // console.log(value);
-        dict1[key].push(value)
-      }
-      // console.log(dict1)
-      createArray1(dict1)
-    }
-  
-    function createArray1(dict1){
-      var temp_arr = [];
-  
-      for(var len = 0; len < keys.length ; len++) {
-        temp_arr.push(dict1[keys[len]][u]);
-      }
-      
-      u=u+1;
-      // console.log(u);
-      global_data1.push(temp_arr);
-      // console.log(global_data1);
-    }
-  
-  // create element & render cafe
-  
-    async function  we1 (){
-        // console.log("FN called");
-  
-        const docRef1 = doc(db, "People/",id,"/sports/"+gameName);
-        const docSnap1 = await getDoc(docRef1);
-        // hideFunction(form.name.value);
-        
-          // console.log(doc.data());
-          
-          createDict1(docSnap1);
-  
-        
-        setArr1(global_data1);
-        
-
-    }
-    we1();
-  
-    
-    
-    var csvContent = '';
-    arr1.forEach(function(infoArray, index) {
-      var dataString = infoArray.join(',');
-      csvContent += index < arr.length ? dataString + '\n' : dataString;
-    });
-    
-    var download = function(content, fileName, mimeType) {
-      var a = document.createElement('a');
-      mimeType = mimeType || 'application/octet-stream';
-      
-      if (navigator.msSaveBlob) { 
-        navigator.msSaveBlob(new Blob([content], {
-          type: mimeType
-        }), fileName);
-      } else if (URL && 'download' in a) { 
-        a.href = URL.createObjectURL(new Blob([content], {
-          type: mimeType
-        }));
-        a.setAttribute('download', fileName);
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-      } else {
-        window.location.href = 'data:application/octet-stream,' + encodeURIComponent(content); // only this mime type is supported
-      }
-    }
-    
-    download(csvContent, 'dowload.csv', 'text/csv;encoding:utf-8');
-  }
-
-  // ................................................................................................................
   return (
     <>
       <div className='body1'>
@@ -311,8 +273,16 @@ const Home = () => {
                   <th>College</th>
                   <th>Email</th>
                   <th>Phone</th>
-                  <th>Download (m)</th>
-                  <th>Download (w)</th>
+
+                  <th>Alt Phone Number</th>
+                  <th>City</th>
+                  <th>College Address</th>
+                  <th>Contingent</th>
+                  <th>Gender</th>
+                  <th>Position</th>
+                  <th>State</th>
+                  <th>Whatsapp Number</th>
+                  
                 </thead>
               <tbody>
           {arr.map((value, index) => {
@@ -320,20 +290,19 @@ const Home = () => {
             return (
               <tr  key={index}>
                 <td>{index+1}</td>
-                <td>{arr[index][0]}</td>
-                <td>{arr[index][1]}</td>
-                <td>{arr[index][2]}</td>
-                <td>{arr[index][3]}</td>
-                <td><button onClick={() => save1(arr2[index],"Basketball(M)")}> BasketBall</button>
-                <button onClick={() => save1(arr2[index],"Badminton(M)")}> Badminton</button>
-                <button onClick={() => save1(arr2[index],"Athletics(M)")}> Athletics</button>
-                <button onClick={() => save1(arr2[index],"Hockey(M)")}> Hockey</button></td>
+                <td>{arr[index][5]}</td>
+                <td>{arr[index][7]}</td>
+                <td>{arr[index][4]}</td>
+                <td>{arr[index][8]}</td>   
 
-                <td><button onClick={() => save1(arr2[index],"Basketball(W)")}> BasketBall</button>
-                <button onClick={() => save1(arr2[index],"Badminton(W)")}> Badminton</button>
-                <button onClick={() => save1(arr2[index],"Athletics(W)")}> Athletics</button>
-                <button onClick={() => save1(arr2[index],"Hockey(W)")}> Hockey</button></td>
-
+                <td>{arr[index][0]}</td>        
+                <td>{arr[index][1]}</td>        
+                <td>{arr[index][2]}</td>        
+                <td>{arr[index][3]}</td>        
+                <td>{arr[index][6]}</td>        
+                <td>{arr[index][10]}</td>        
+                <td>{arr[index][11]}</td>        
+                <td>{arr[index][12]}</td>        
                 
               </tr>
           );
@@ -351,30 +320,3 @@ const Home = () => {
 
 export default Home;
 
-
-// <div class="w-full bg-white rounded-lg border shadow-md dark:bg-gray-800 dark:border-gray-700">
-//     <div id="defaultTabContent">            
-//             <ul role="list" class="space-y-4 text-gray-500 dark:text-gray-400">
-//                 <li class="flex space-x-2">
-                    
-//                     <svg class="flex-shrink-0 w-4 h-4 text-blue-600 dark:text-blue-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-//                     <span class="font-light leading-tight">Dynamic reports and dashboards</span>
-//                 </li>
-//                 <li class="flex space-x-2">
-                    
-//                     <svg class="flex-shrink-0 w-4 h-4 text-blue-600 dark:text-blue-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-//                     <span class="font-light leading-tight">Templates for everyone</span>
-//                 </li>
-//                 <li class="flex space-x-2">
-                    
-//                     <svg class="flex-shrink-0 w-4 h-4 text-blue-600 dark:text-blue-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-//                     <span class="font-light leading-tight">Development workflow</span>
-//                 </li>
-//                 <li class="flex space-x-2">
-                    
-//                     <svg class="flex-shrink-0 w-4 h-4 text-blue-600 dark:text-blue-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-//                     <span class="font-light leading-tight">Limitless business automation</span>
-//                 </li>
-//             </ul>
-//     </div>
-// </div>
