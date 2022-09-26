@@ -129,25 +129,33 @@ const Home = () => {
 
   async function addSportsInTemp(temp_arr,document){
 
-    var t_arr = [];
-    // console.log(temp_arr.length)
-    for(var len = 0; len < allSports.length ; len++) {
-      const ref = doc(db,"People", document.id,"sports",allSports[len])
-      const docSnap = await getDoc(ref);
-      // console.log(temp_arr)
-      if (docSnap.exists()) {
-        t_arr.push("2000");
+    const teamCount = new Map();
+    const docRef = collection(db, "People",document.id,"sports");
+    const docSnap = await getDocs(docRef);
+      
+      // hideFunction(form.name.value);
+      // console.log(typeof(docSnap))
+      docSnap.forEach(dox => {
+        // console.log(doc.data());
+        const sp = dox.data()["sport"]
+        teamCount.set(sp,dox.data()["team"].length)
         
-      } else {
-        t_arr.push("0");
+        // teamCount.set(,);
+
+      });
+      
+      for(var len = 0; len < allSports.length ; len++) {
+        if(teamCount.get(allSports[len])==undefined){
+          temp_arr.push("")
+        }
+        else{
+          temp_arr.push(teamCount.get(allSports[len]))
+        }
+
       }
-    }
-    console.log(t_arr.length)
-    // temp_arr.push("2000");
-    // temp_arr.push("0");
-
+      
     global_data_Large.push(temp_arr);
-
+      
   }
 
 // create element & render cafe
@@ -186,11 +194,12 @@ const Home = () => {
       });
       setArr(global_data);
       setArrLarge(global_data_Large);
-      // console.log(arr);
+      console.log(arrLarge);
       
       
-  }
-  we();
+    }
+    we();
+    
 
   function hideFunction() {
     // Declare variables
@@ -222,10 +231,12 @@ const Home = () => {
   function save(){
       console.log("f2");
       var csvContent = '';
+      
       arrLarge.forEach(function(infoArray, index) {
           var dataString = infoArray.join(',');
           csvContent += index < arrLarge.length ? dataString + '\n' : dataString;
         });
+        
 
       var download = function(content, fileName, mimeType) {
         var a = document.createElement('a');
