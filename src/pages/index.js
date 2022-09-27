@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import items from "../json/allSports.json"
 import fields from "../json/fields.json"
+import { info } from 'autoprefixer';
 
 const Home = () => {
   
@@ -63,7 +64,7 @@ const Home = () => {
         }
       }
       callAsync();
-
+      we();
      
     }
   }, [user, loading]);
@@ -193,12 +194,13 @@ const Home = () => {
 
       });
       setArr(global_data);
+      console.log("GLobal Data Large" + global_data_Large)
       setArrLarge(global_data_Large);
-      console.log(arrLarge);
+      console.log("arrLarge"+arrLarge);
       
       
     }
-    we();
+    
     
 
   function hideFunction() {
@@ -227,38 +229,48 @@ const Home = () => {
       }
     }
   }
+  var download = function(content, fileName, mimeType) {
+    var a = document.createElement('a');
+    mimeType = mimeType || 'application/octet-stream';
+
+    if (navigator.msSaveBlob) { 
+      navigator.msSaveBlob(new Blob([content], {
+        type: mimeType
+      }), fileName);
+    } else if (URL && 'download' in a) { 
+      a.href = URL.createObjectURL(new Blob([content], {
+        type: mimeType
+      }));
+      a.setAttribute('download', fileName);
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    } else {
+      window.location.href = 'data:application/octet-stream,' + encodeURIComponent(content); // only this mime type is supported
+    }
+  }
 // 
   function save(){
-      console.log("f2");
       var csvContent = '';
       
       arrLarge.forEach(function(infoArray, index) {
+        var total = 0;
+        for(var i = 14; i<infoArray.length; i++){
+            console.log("======== i"+infoArray[i]);
+            if(infoArray[i].length === 0 || index!=0) {
+            console.log("empty  "+infoArray)
+            // infoArray[i]=0;
+          }
+          // else {
+          //     console.log("full  "+infoArray[i])
+          //     total+=infoArray[i]
+          //   }
+          }
+          infoArray.push(total)
           var dataString = infoArray.join(',');
+          // console.log("dataString: "+dataString)
           csvContent += index < arrLarge.length ? dataString + '\n' : dataString;
         });
-        
-
-      var download = function(content, fileName, mimeType) {
-        var a = document.createElement('a');
-        mimeType = mimeType || 'application/octet-stream';
-
-        if (navigator.msSaveBlob) { 
-          navigator.msSaveBlob(new Blob([content], {
-            type: mimeType
-          }), fileName);
-        } else if (URL && 'download' in a) { 
-          a.href = URL.createObjectURL(new Blob([content], {
-            type: mimeType
-          }));
-          a.setAttribute('download', fileName);
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-        } else {
-          window.location.href = 'data:application/octet-stream,' + encodeURIComponent(content); // only this mime type is supported
-        }
-      }
-        
         download(csvContent, 'dowload.csv', 'text/csv;encoding:utf-8');
   }
 

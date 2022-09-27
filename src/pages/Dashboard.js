@@ -38,7 +38,7 @@ export default function Dashboard() {
   useEffect(() => {
     if (loading) return;
     if (!user) return navigate("/");
-
+    sun();
   }, [user, loading]);
 
   const sun = async () => {
@@ -64,7 +64,7 @@ export default function Dashboard() {
       console.log("No such document");
     }
   };
-  sun();
+
 
   return (
     <>
